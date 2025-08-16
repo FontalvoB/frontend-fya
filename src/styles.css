@@ -2,20 +2,124 @@
 @tailwind components;
 @tailwind utilities;
 
-:root { color-scheme: light dark; }
+/* =============================
+   TOKENS DE DISEÑO – FINTECH
+   ============================= */
+:root {
+  /* Base midnight */
+  --bg-950: #070b17;
+  --bg-900: #0b1220;
 
-/* Glass card */
-.card { @apply bg-white/10 backdrop-blur-md rounded-2xl shadow-soft border border-white/10; }
-.input { @apply w-full rounded-xl border border-white/20 bg-white/10 px-4 py-2 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/40; }
-.label { @apply text-white/90 text-sm font-medium; }
+  /* Texto */
+  --text-100: 255,255,255;
+  --muted: 255,255,255,0.72;
+  --border: 255,255,255,0.12;
+
+  /* Acentos Fintech */
+  --mint: #22c55e;     /* emerald-500 */
+  --mint-400: #34d399; /* emerald-400 */
+  --cyan: #06b6d4;     /* cyan-500 */
+  --cyan-400: #22d3ee; /* cyan-400 */
+}
+
+html, body, #root { height: 100%; }
+
+/* Fondo dinámico con glows y gradientes suaves */
+body {
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(34,211,238,0.12), transparent 40%),
+    radial-gradient(900px 500px at 98% 6%, rgba(34,197,94,0.12), transparent 42%),
+    linear-gradient(180deg, var(--bg-950), var(--bg-900));
+  color: rgb(var(--text-100));
+  font-feature-settings: "cv02","cv03","cv04","cv11";
+}
+
+@layer base {
+  :root { --font-sans: ui-sans-serif, system-ui, "Inter", "Sora", "Segoe UI", Roboto, Helvetica, Arial; }
+  html { @apply antialiased; }
+  body { @apply font-sans; }
+}
+
+/* ============ LAYOUT ============ */
+.page-shell { @apply relative min-h-screen overflow-hidden; }
+.page-shell::before{
+  content:""; position:absolute; inset:0; pointer-events:none; z-index:-1;
+  background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+  background-size: 24px 24px; background-position: -1px -1px;
+}
+.bg-glow { position:absolute; filter: blur(130px); opacity:.55; z-index:-1; }
+
+/* ============ COMPONENTES ============ */
+.card {
+  position: relative;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+  border: 1px solid rgba(var(--border));
+  box-shadow: 0 12px 60px rgba(0,0,0,.35);
+  backdrop-filter: blur(10px);
+}
+.card::before {
+  /* borde luminiscente */
+  content:""; position:absolute; inset:0; border-radius:inherit; padding:1px;
+  background: linear-gradient(135deg, rgba(34,197,94,.45), rgba(34,211,238,.35));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude; pointer-events:none;
+}
+
+.label { @apply text-sm font-medium text-white/90; }
+
+.input {
+  @apply w-full rounded-xl px-4 py-2 text-white placeholder-white/60 transition;
+  @apply border bg-white/5; border-color: rgba(var(--border));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+}
+.input:focus {
+  @apply outline-none ring-2; border-color: rgba(34,211,238,.35);
+  --tw-ring-color: rgba(34,211,238,.45);
+  box-shadow: 0 0 0 3px rgba(34,211,238,.22);
+}
+.input[aria-invalid="true"] { border-color: rgba(248,113,113,.55); }
+
+/* Prefijos en inputs (ej: COP) */
+.input-wrap { position:relative; }
+.input-wrap .prefix {
+  position:absolute; left:12px; top:8px; font-size:.85rem; color: rgba(255,255,255,.7);
+}
+.input-wrap input { padding-left: 50px; }
+
+.badge { @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold;
+  background: linear-gradient(180deg, rgba(34,211,238,.18), rgba(34,197,94,.18));
+  border: 1px solid rgba(34,211,238,.35);
+}
+
 .btn { @apply inline-flex items-center justify-center rounded-xl px-4 py-2 font-semibold transition-all disabled:opacity-60 disabled:cursor-not-allowed; }
-.btn-primary { @apply btn bg-white text-brand-900 hover:scale-[1.01]; }
-.btn-ghost { @apply btn bg-white/5 text-white hover:bg-white/10; }
-.badge { @apply rounded-full px-3 py-1 text-xs font-semibold bg-white/10 text-white; }
+.btn-primary {
+  color: #041a11;
+  background: linear-gradient(135deg, var(--mint-400), var(--cyan-400));
+  box-shadow: 0 10px 30px rgba(34,197,94,.22), inset 0 1px 0 rgba(255,255,255,.35);
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 14px 40px rgba(34,211,238,.3), inset 0 1px 0 rgba(255,255,255,.45); }
+
+.btn-ghost { @apply bg-white/5 text-white; border: 1px solid rgba(var(--border)); }
+.btn-ghost:hover { @apply bg-white/10; }
+
 .table { @apply w-full text-left; }
 .th, .td { @apply px-4 py-3; }
-.th { @apply text-white/80 text-sm font-semibold; }
-.td { @apply text-white/90; }
+.th { @apply text-white/80 text-sm font-semibold; position:sticky; top:0; backdrop-filter: blur(6px); background: rgba(7,11,23,.55); }
+.td { @apply text-white/90; border-top: 1px solid rgba(255,255,255,.05); }
+tr:hover > .td { background: rgba(255,255,255,.04); }
 
-/* Fancy focus */
-*:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(255,255,255,.3); border-radius: 12px; }
+/* Skeleton shimmer premium */
+@keyframes shimmer { 0% { background-position: -1000px 0; } 100% { background-position: 1000px 0; } }
+.skel { height: 24px; border-radius: 10px; background: linear-gradient(90deg, rgba(255,255,255,.06) 25%, rgba(255,255,255,.12) 37%, rgba(255,255,255,.06) 63%); background-size: 1000px 100%; animation: shimmer 1.6s infinite linear; }
+
+/* Estados de mensaje tipo "toast inline" */
+.msg-ok { color:#bbf7d0; }
+.msg-err { color:#fecaca; }
+
+/* Accesibilidad focus */
+*:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(34,211,238,.35); border-radius: 12px; }
+
+/* Footer */
+.app-footer { color: rgba(var(--text-100), .7); }

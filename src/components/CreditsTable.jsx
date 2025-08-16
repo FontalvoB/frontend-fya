@@ -8,28 +8,23 @@ export default function CreditsTable({ refreshFlag }) {
   const [filters, setFilters] = useState({ name: "", id: "", agent: "" });
   const [sort, setSort] = useState({ by: "createdAt", order: "desc" });
 
-  useEffect(() => { (async () => {
-    setLoading(true);
-    const data = await listCredits({ ...filters, sortBy: sort.by, order: sort.order });
-    setRows(data);
-    setLoading(false);
-  })(); }, [refreshFlag, sort]);
+  useEffect(() => {
+    (async () => { setLoading(true); const data = await listCredits({ ...filters, sortBy: sort.by, order: sort.order }); setRows(data); setLoading(false); })();
+  }, [refreshFlag, sort]);
 
-  const filtered = useMemo(() => {
-    return rows.filter(r => (
-      (!filters.name || r.customerName.toLowerCase().includes(filters.name.toLowerCase())) &&
-      (!filters.id || r.customerId.toLowerCase().includes(filters.id.toLowerCase())) &&
-      (!filters.agent || r.agent.toLowerCase().includes(filters.agent.toLowerCase()))
-    ));
-  }, [rows, filters]);
+  const filtered = useMemo(() => rows.filter(r => (
+    (!filters.name || r.customerName.toLowerCase().includes(filters.name.toLowerCase())) &&
+    (!filters.id || r.customerId.toLowerCase().includes(filters.id.toLowerCase())) &&
+    (!filters.agent || r.agent.toLowerCase().includes(filters.agent.toLowerCase()))
+  )), [rows, filters]);
 
   return (
     <section className="card p-6 space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-white text-xl font-semibold">Créditos registrados</h2>
         <div className="flex items-center gap-2">
-          <button className={`btn-ghost ${sort.by === "createdAt" ? "ring-2 ring-white/30" : ""}`} onClick={() => setSort(s => ({ by: "createdAt", order: s.order }))}>Orden: Fecha</button>
-          <button className={`btn-ghost ${sort.by === "amount" ? "ring-2 ring-white/30" : ""}`} onClick={() => setSort(s => ({ by: "amount", order: s.order }))}>Orden: Valor</button>
+          <button className={`btn-ghost ${sort.by === "createdAt" ? "ring-2 ring-cyan-400/40" : ""}`} onClick={() => setSort(s => ({ by: "createdAt", order: s.order }))}>Orden: Fecha</button>
+          <button className={`btn-ghost ${sort.by === "amount" ? "ring-2 ring-cyan-400/40" : ""}`} onClick={() => setSort(s => ({ by: "amount", order: s.order }))}>Orden: Valor</button>
           <button className="btn-ghost" onClick={() => setSort(s => ({ ...s, order: s.order === "asc" ? "desc" : "asc" }))}>{sort.order === "asc" ? "Asc" : "Desc"}</button>
         </div>
       </div>
@@ -40,7 +35,7 @@ export default function CreditsTable({ refreshFlag }) {
         <input className="input" placeholder="Filtrar por comercial" value={filters.agent} onChange={e => setFilters(f => ({ ...f, agent: e.target.value }))} />
       </div>
 
-      <div className="overflow-auto">
+      <div className="overflow-auto rounded-xl border border-white/10">
         <table className="table">
           <thead>
             <tr className="border-b border-white/10">
@@ -55,14 +50,10 @@ export default function CreditsTable({ refreshFlag }) {
           </thead>
           <tbody>
             {loading ? (
-              [...Array(6)].map((_,i) => (
-                <tr key={i} className="animate-pulse">
-                  <td className="td" colSpan="7"><div className="h-6 bg-white/10 rounded"></div></td>
-                </tr>
-              ))
+              [...Array(6)].map((_,i) => (<tr key={i}><td className="td" colSpan="7"><div className="skel"/></td></tr>))
             ) : (
               filtered.map(r => (
-                <tr key={r.id} className="border-b border-white/5 hover:bg-white/5">
+                <tr key={r.id} className="hover:bg-white/5">
                   <td className="td">{r.customerName}</td>
                   <td className="td">{r.customerId}</td>
                   <td className="td">{money(r.amount)}</td>
