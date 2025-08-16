@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { loginUser, registerUser } from "../lib/api";
-import logo from "../img/logo_oficial.png"; // 👈 mismo logo que usas en Topbar
-
+import logo from "../img/logo_oficial.png"; 
 export default function Auth() {
-  const [mode, setMode] = useState("login"); // 'login' | 'register'
+  const [mode, setMode] = useState("login"); 
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [err, setErr] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -24,7 +23,7 @@ export default function Auth() {
       const res = mode === "register" ? await registerUser(payload) : await loginUser(payload);
       localStorage.setItem("token", res.token);
       localStorage.setItem("user", JSON.stringify(res.user));
-      window.location.href = "/"; // al dashboard
+      window.location.href = "/"; 
     } catch (e2) {
       setErr(e2?.response?.data?.error || "Error");
     } finally {
