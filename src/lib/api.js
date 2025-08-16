@@ -9,7 +9,7 @@ export async function listCredits(params = {}) {
   return data.credits;
 }
 
-// Auth
+
 export async function registerUser(payload) {
   const { data } = await http.post("/api/auth/register", payload);
   console.log("llega",data,payload)
@@ -17,5 +17,5 @@ export async function registerUser(payload) {
 }
 export async function loginUser(payload) {
   const { data } = await http.post("/api/auth/login", payload);
-  return data; // { ok, user, token }
+  return data;
 }
