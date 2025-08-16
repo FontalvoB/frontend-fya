@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Topbar from "./components/Topbar.jsx";
 import CreditForm from "./components/CreditForm.jsx";
 import CreditsTable from "./components/CreditsTable.jsx";
+import logo from "./img/logo_oficial.png"; 
 
 export default function App() {
   const [refreshFlag, setRefreshFlag] = useState(0);
@@ -12,7 +13,7 @@ export default function App() {
 
   return (
     <main className="page-shell">
-      {/* glows decorativos */}
+     
       <div className="bg-glow -top-24 -left-24 w-[700px] h-[700px] bg-cyan-500/30 rounded-full" />
       <div className="bg-glow -bottom-24 -right-24 w-[700px] h-[700px] bg-emerald-500/25 rounded-full" />
 
@@ -23,8 +24,11 @@ export default function App() {
         <CreditsTable refreshFlag={refreshFlag} />
       </div>
 
-      <footer className="text-center app-footer text-xs py-6">
-        Fya Social Capital
+      <footer className="text-center app-footer py-6">
+        <div className="flex flex-col items-center gap-2">
+          <img src={logo} alt="Fya Social Capital" className="h-6 w-auto opacity-80" />
+        
+        </div>
       </footer>
     </main>
   );

@@ -67,61 +67,127 @@ export default function CreditForm({ onCreated }) {
   };
 
   return (
-    <form className="card p-6 space-y-5" onSubmit={submit}>
-      <div className="flex items-center justify-between">
-        <h2 className="text-white text-xl font-semibold">Registrar crédito</h2>
-        <span className="badge">Asíncrono</span>
+
+<form className="card p-6 space-y-5" onSubmit={submit}>
+  <div className="flex items-center justify-between">
+    <h2 className="text-white text-xl font-semibold">Registrar crédito</h2>
+    <span className="badge" title="La acción de guardar se realiza de forma asíncrona">Tabla</span>
+  </div>
+
+  <div className="grid md:grid-cols-2 gap-4">
+    <div>
+      <label className="label">Nombre del cliente*</label>
+      <input
+        className="input"
+        value={form.customerName}
+        onChange={(e) => update("customerName", e.target.value)}
+        placeholder="Ej: Pepito Perez"
+        required
+        autoComplete="name"
+      />
+    </div>
+
+    <div>
+      <label className="label">Cédula o ID*</label>
+      <input
+        className="input"
+        inputMode="numeric"
+        pattern="[0-9]*"
+        value={form.customerId}
+        onChange={onCustomerIdChange}
+        placeholder="Ej: 123456789"
+        aria-invalid={!!errors.customerId}
+        aria-describedby="customerId-error"
+        required
+        autoComplete="off"
+      />
+      {errors.customerId && <p id="customerId-error" className="text-red-200 text-xs mt-1">{errors.customerId}</p>}
+    </div>
+
+    <div>
+      <label className="label">Valor del crédito (COP)*</label>
+      <div className="input-wrap">
+        <span className="prefix">COP</span>
+        <input
+          className="input"
+          inputMode="numeric"
+          value={form.amount}
+          onChange={onAmountChange}
+          placeholder="Ej: 7800000"
+          aria-invalid={!!errors.amount}
+          aria-describedby="amount-error"
+          required
+        />
       </div>
+      {form.amount && <p className="text-white/70 text-xs mt-1">{money(form.amount)}</p>}
+      {errors.amount && <p id="amount-error" className="text-red-200 text-xs mt-1">{errors.amount}</p>}
+    </div>
 
-      <div className="grid md:grid-cols-2 gap-4">
-        <div>
-          <label className="label">Nombre del cliente*</label>
-          <input className="input" value={form.customerName} onChange={(e) => update("customerName", e.target.value)} placeholder="Ej: Pepito Perez" />
-        </div>
+    <div>
+      <label className="label">Tasa de interés (decimal)</label>
+      <input
+        className="input"
+        type="number"
+        step="0.0001"
+        min="0"
+        max="1"
+        value={form.interestRate}
+        onChange={(e) => update("interestRate", e.target.value)}
+        title="Ej: 0.02 = 2%"
+      />
+    </div>
 
-        <div>
-          <label className="label">Cédula o ID*</label>
-          <input className="input" inputMode="numeric" pattern="[0-9]*" value={form.customerId} onChange={onCustomerIdChange} placeholder="Ej: 123456789" aria-invalid={!!errors.customerId} aria-describedby="customerId-error" />
-          {errors.customerId && <p id="customerId-error" className="text-red-200 text-xs mt-1">{errors.customerId}</p>}
-        </div>
+    <div>
+      <label className="label">Plazo (meses)</label>
+      <input
+        className="input"
+        type="number"
+        min="1"
+        max="360"
+        value={form.termMonths}
+        onChange={(e) => update("termMonths", e.target.value)}
+      />
+    </div>
 
-        <div>
-          <label className="label">Valor del crédito (COP)*</label>
-          <div className="input-wrap">
-            <span className="prefix">COP</span>
-            <input className="input" inputMode="numeric" value={form.amount} onChange={onAmountChange} placeholder="Ej: 7800000" aria-invalid={!!errors.amount} aria-describedby="amount-error" />
-          </div>
-          {form.amount && <p className="text-white/70 text-xs mt-1">{money(form.amount)}</p>}
-          {errors.amount && <p id="amount-error" className="text-red-200 text-xs mt-1">{errors.amount}</p>}
-        </div>
+    <div>
+      <label className="label">Comercial*</label>
+      <input
+        className="input"
+        value={form.agent}
+        onChange={(e) => update("agent", e.target.value)}
+        placeholder="Ej: Comercial 1"
+        required
+        autoComplete="off"
+      />
+    </div>
+  </div>
 
-        <div>
-          <label className="label">Tasa de interés (decimal)</label>
-          <input className="input" type="number" step="0.01" value={form.interestRate} onChange={(e) => update("interestRate", e.target.value)} />
-        </div>
+  <div className="flex items-center gap-3 pt-2">
+    <button className="btn btn-primary" disabled={loading || !!errors.amount || !!errors.customerId}>
+      {loading ? "Registrando…" : "Registrar"}
+    </button>
+    <button
+      type="button"
+      className="btn-ghost"
+      onClick={() => {
+        setForm({ customerName: "", customerId: "", amount: "", interestRate: 0.02, termMonths: 12, agent: "" });
+        setErrors({ amount: null, customerId: null }); setMsg(null);
+      }}
+    >
+      Limpiar
+    </button>
+  </div>
 
-        <div>
-          <label className="label">Plazo (meses)</label>
-          <input className="input" type="number" value={form.termMonths} onChange={(e) => update("termMonths", e.target.value)} />
-        </div>
+  {msg && (
+    <div
+      className={`mt-2 text-sm ${msg.type === "ok" ? "msg-ok" : "msg-err"}`}
+      role="status"
+      aria-live="polite"
+    >
+      {msg.text}
+    </div>
+  )}
+</form>
 
-        <div>
-          <label className="label">Comercial*</label>
-          <input className="input" value={form.agent} onChange={(e) => update("agent", e.target.value)} placeholder="Ej: Comercial 1" />
-        </div>
-      </div>
-
-      <div className="flex items-center gap-3 pt-2">
-        <button className="btn btn-primary" disabled={loading || !!errors.amount || !!errors.customerId}>
-          {loading ? "Registrando…" : "Registrar"}
-        </button>
-        <button type="button" className="btn-ghost" onClick={() => {
-          setForm({ customerName: "", customerId: "", amount: "", interestRate: 0.02, termMonths: 12, agent: "" });
-          setErrors({ amount: null, customerId: null }); setMsg(null);
-        }}>Limpiar</button>
-      </div>
-
-      {msg && <div className={`mt-2 text-sm ${msg.type === "ok" ? "msg-ok" : "msg-err"}`}>{msg.text}</div>}
-    </form>
   );
 }
